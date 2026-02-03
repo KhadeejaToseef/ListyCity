@@ -3,6 +3,7 @@ package com.example.listycity;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -23,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> cityAdapter;
     ArrayList<String> dataList;
     Button addButton, deleteButton;
-    EditText inputCity;
     int selectedPosition = -1;
 
     @Override
@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         cityList = findViewById(R.id.city_list);
         addButton = findViewById(R.id.button_add);
         deleteButton = findViewById(R.id.button_delete);
-        inputCity = findViewById(R.id.input_city);
 
         String []cities = {"Edmonton", "Vancouver", "Moscow", "Sydney", "Berlin", "Vienna", "Tokyo", "Beijing", "Osaka", "New Delhi"};
 
@@ -50,13 +49,26 @@ public class MainActivity extends AppCompatActivity {
 
         addButton.setOnClickListener(v -> {
 
-            String cityName = inputCity.getText().toString().trim();
+            // Create an EditText for dialog input
+            EditText dialogInput = new EditText(MainActivity.this);
+            dialogInput.setHint("Enter city name");
+            dialogInput.setPadding(40, 30, 40, 30);
 
-            if (!cityName.isEmpty()) {
-                dataList.add(cityName);
-                cityAdapter.notifyDataSetChanged();
-                inputCity.setText("");
-            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Add City");
+            builder.setView(dialogInput);
+
+            // CONFIRM button only
+            builder.setPositiveButton("Confirm", (dialog, which) -> {
+                String cityName = dialogInput.getText().toString().trim();
+
+                if (!cityName.isEmpty()) {
+                    dataList.add(cityName);
+                    cityAdapter.notifyDataSetChanged();
+                }
+            });
+
+            builder.show();
         });
 
         deleteButton.setOnClickListener(v -> {
